@@ -1,0 +1,77 @@
+version: '3'
+services:
+  php5.6:
+    build: ./env_builds/php5.6
+    restart: always
+    networks:
+      - env
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+     - ./wwwroot:/wwwroot
+     - ./config/php5.6/www.conf:/usr/local/etc/php-fpm.d/www.conf
+     - ./config/php5.6/php.ini:/usr/local/etc/php/php.ini
+  php7.0:
+    build: ./env_builds/php7.0
+    restart: always
+    networks:
+      - env
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+     - ./wwwroot:/wwwroot
+     - ./config/php7.0/www.conf:/usr/local/etc/php-fpm.d/www.conf
+     - ./config/php7.0/php.ini:/usr/local/etc/php/php.ini
+  php7.3:
+    build: ./env_builds/php7.3
+    restart: always
+    networks:
+      - env
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+     - ./wwwroot:/wwwroot
+     - ./config/php7.3/www.conf:/usr/local/etc/php-fpm.d/www.conf
+     - ./config/php7.3/php.ini:/usr/local/etc/php/php.ini
+  nginx:
+    image: nginx:1.16-alpine
+    networks:
+      - env
+    depends_on:
+      - php5.6
+      - php7.0
+      - php7.3
+    ports:
+      - "80:80"
+    volumes:
+      - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./config/nginx/conf.d:/etc/nginx/conf.d
+      - ./wwwroot:/wwwroot
+  mysql:
+    image: mysql:5.7
+    ports:
+     - "3306:3306"
+    volumes:
+     - ./data/Mysql5.7:/var/lib/mysql
+     - ./wwwroot:/wwwroot
+    environment:
+      - MYSQL_ROOT_PASSWORD=12306
+    restart: always
+    networks:
+      - env
+  redis:
+    build: ./env_builds/redis
+    ports:
+     - "6379:6379"
+    volumes:
+     - ./data/redis5:/data
+     - ./config/redis/redis.conf:/usr/local/etc/redis/redis.conf
+    restart: always
+    networks:
+      - env
+      
+networks: 
+  env:
