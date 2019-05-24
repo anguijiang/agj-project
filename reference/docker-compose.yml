@@ -1,7 +1,8 @@
 version: '3'
 services:
   php5.6:
-    build: ./env_builds/php5.6
+    image: registry.cn-hangzhou.aliyuncs.com/chunmeng_jiang/php_env:fpm-5.6
+#    build: ./env_builds/php5.6
     restart: always
     networks:
       - env
@@ -13,7 +14,8 @@ services:
      - ./config/php5.6/www.conf:/usr/local/etc/php-fpm.d/www.conf
      - ./config/php5.6/php.ini:/usr/local/etc/php/php.ini
   php7.0:
-    build: ./env_builds/php7.0
+    image: registry.cn-hangzhou.aliyuncs.com/chunmeng_jiang/php_env:fpm-7.0
+#    build: ./env_builds/php7.0
     restart: always
     networks:
       - env
@@ -25,7 +27,8 @@ services:
      - ./config/php7.0/www.conf:/usr/local/etc/php-fpm.d/www.conf
      - ./config/php7.0/php.ini:/usr/local/etc/php/php.ini
   php7.3:
-    build: ./env_builds/php7.3
+    image: registry.cn-hangzhou.aliyuncs.com/chunmeng_jiang/php_env:fpm-7.3
+#    build: ./env_builds/php7.3
     restart: always
     networks:
       - env
@@ -63,7 +66,8 @@ services:
     networks:
       - env
   redis:
-    build: ./env_builds/redis
+    image: registry.cn-hangzhou.aliyuncs.com/chunmeng_jiang/php_env:redis
+#    build: ./env_builds/redis
     ports:
      - "6379:6379"
     volumes:
