@@ -25,6 +25,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
       && docker-php-ext-configure pdo_mysql && docker-php-ext-install -j$(nproc) pdo_mysql \
       && docker-php-ext-configure mysqli && docker-php-ext-install -j$(nproc) mysqli \
       && pecl install redis-4.3.0 && docker-php-ext-enable redis \
+      && pecl install xdebug-2.7.2 && docker-php-ext-enable xdebug \
       && pecl install uuid && docker-php-ext-enable uuid \
       && apk add --no-cache ${BISIC_TOOLS} \
       && ln -sf /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
