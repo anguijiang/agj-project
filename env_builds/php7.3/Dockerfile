@@ -3,6 +3,8 @@ FROM php:7.3-fpm-alpine
 LABEL author="响当当"
 
 ENV EXT_DEPENDENT=" \
+        freetype-dev \
+        libjpeg-turbo-dev \
         libpng-dev \
         libzip-dev \
         unixodbc-dev \
@@ -28,7 +30,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
       && mkdir /usr/local/incl && cp /usr/include/sqlext.h /usr/local/incl/ \
       && docker-php-ext-configure odbc  --with-unixODBC=shared,/usr && docker-php-ext-install -j$(nproc) odbc \
       && docker-php-ext-configure pdo_dblib && docker-php-ext-install -j$(nproc) pdo_dblib \
-      && docker-php-ext-configure gd && docker-php-ext-install -j$(nproc) gd \
+      && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && docker-php-ext-install -j$(nproc) gd \
       && docker-php-ext-configure zip && docker-php-ext-install -j$(nproc) zip \
       && docker-php-ext-configure bcmath && docker-php-ext-install -j$(nproc) bcmath \
       && docker-php-ext-configure pdo_mysql && docker-php-ext-install -j$(nproc) pdo_mysql \

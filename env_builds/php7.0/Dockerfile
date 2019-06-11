@@ -4,6 +4,8 @@ LABEL author="响当当"
 
 ENV EXT_DEPENDENT=" \
         libpng-dev \
+        freetype-dev \
+        libjpeg-turbo-dev \
         libzip-dev \
         util-linux-dev" \
     BISIC_TOOLS="tzdata"
@@ -17,7 +19,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
       && deluser www-data && addgroup -g $UID -S www-data && adduser -u $UID -D -S -G www-data www-data \
       && apk add --no-cache --virtual .build-deps $PHPIZE_DEPS \
       && apk add $EXT_DEPENDENT \
-      && docker-php-ext-configure gd && docker-php-ext-install -j$(nproc) gd \
+      && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && docker-php-ext-install -j$(nproc) gd \
       && docker-php-ext-configure zip && docker-php-ext-install -j$(nproc) zip \
       && docker-php-ext-configure bcmath && docker-php-ext-install -j$(nproc) bcmath \
       && docker-php-ext-configure pdo_mysql && docker-php-ext-install -j$(nproc) pdo_mysql \
