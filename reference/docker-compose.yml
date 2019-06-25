@@ -53,6 +53,12 @@ services:
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./config/nginx/conf.d:/etc/nginx/conf.d
       - ./wwwroot:/wwwroot
+  node:
+    build: env_builds/node
+    volumes:
+     - ./wwwroot:/wwwroot
+    networks:
+      - env
   mysql:
     image: mysql:5.7
     ports:
