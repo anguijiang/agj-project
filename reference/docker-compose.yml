@@ -84,7 +84,7 @@ services:
     networks:
       - env
   rabbitmq:
-    image: rabbitmq:3.7-management-alpine
+    build: ./env_builds/hyperf
     restart: always
     environment:
       - RABBITMQ_DEFAULT_USER=root
