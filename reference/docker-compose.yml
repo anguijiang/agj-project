@@ -40,7 +40,7 @@ services:
      - ./config/php7.3/www.conf:/usr/local/etc/php-fpm.d/www.conf
      - ./config/php7.3/php.ini:/usr/local/etc/php/php.ini
   hyperf:
-    image: hyperf/hyperf:7.3-alpine-cli
+    build: ./env_builds/hyperf
     networks:
       - env
     depends_on:
@@ -84,7 +84,7 @@ services:
     networks:
       - env
   rabbitmq:
-    build: ./env_builds/hyperf
+    image: rabbitmq:3.7-management-alpine
     restart: always
     environment:
       - RABBITMQ_DEFAULT_USER=root
