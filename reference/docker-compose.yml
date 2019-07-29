@@ -39,6 +39,18 @@ services:
      - ./wwwroot:/wwwroot
      - ./config/php7.3/www.conf:/usr/local/etc/php-fpm.d/www.conf
      - ./config/php7.3/php.ini:/usr/local/etc/php/php.ini
+  hyperf:
+    image: hyperf/hyperf:7.3-alpine-cli
+    networks:
+      - env
+    depends_on:
+      - mysql
+      - redis
+      - rabbitmq
+    volumes:
+      - ./wwwroot:/wwwroot
+    ports:
+      - "9501:9501"
   nginx:
     image: nginx:1.16-alpine
     networks:
@@ -71,6 +83,17 @@ services:
     restart: always
     networks:
       - env
+  rabbitmq:
+    image: rabbitmq:3.7-management-alpine
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=12306
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - env
   redis:
     image: registry.cn-hangzhou.aliyuncs.com/chunmeng_jiang/php_env:redis
 #    build: ./env_builds/redis
@@ -82,6 +105,5 @@ services:
     restart: always
     networks:
       - env
-      
 networks: 
   env:
