@@ -33,8 +33,9 @@
 
 4. 默认密码，服务名
 
-   > 以下两个容器默认密码均为 12306
+   > 以下所有容器默认密码均为 12306
 
    - 容器内连接 Mysql, 连接 `host` 即为 `mysql`，`port` **3306**
    - 容器内连接 Redis, 连接 `host` 即为 `redis`, `port` **6379**
+   - 容器内连接 rabbitmq, 连接 `host`即为 `rabbitmq`, `port` **5672**, `rabbitmq management` port **15672**
 
