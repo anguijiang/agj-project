@@ -78,6 +78,7 @@ services:
     volumes:
      - ./data/Mysql5.7:/var/lib/mysql
      - ./wwwroot:/wwwroot
+     - ./config/mysql/mysqld.conf:/etc/mysql/mysql.conf.d/mysqld.cnf
     environment:
       - MYSQL_ROOT_PASSWORD=12306
     restart: always
