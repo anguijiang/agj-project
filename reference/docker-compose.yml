@@ -128,5 +128,52 @@ services:
       - ./config/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
     networks:
       - env
+  zookeeper:
+    image: zookeeper
+    restart: always
+    hostname: zoo1
+    ports:
+      - 2181:2181
+    environment:
+      ZOO_MY_ID: 1
+      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181
+    restart: always
+    networks: 
+      - env
+  namesrv:
+    image: apacherocketmq/rocketmq:4.5.0
+    ports:
+      - 9876:9876
+    volumes:
+      - ./data/rocketmq/namesrv/logs:/home/rocketmq/logs
+    command: sh mqnamesrv
+    networks:
+      env:
+  broker:
+    image: apacherocketmq/rocketmq:4.5.0
+    ports:
+      - 10909:10909
+      - 10911:10911
+      - 10912:10912
+    volumes:
+      - ./data/rocketmq/broker/logs:/home/rocketmq/logs
+      - ./data/rocketmq/broker/store:/home/rocketmq/store
+      - ./config/rocketmq/broker/conf/broker.conf:/home/rocketmq/rocketmq-4.5.0/conf/broker.conf
+    command: sh mqbroker -n namesrv:9876 autoCreateTopicEnable=true -c ../conf/broker.conf 
+    depends_on:
+      - namesrv
+    networks:
+      env:
+  rocketmq_console:
+    image: styletang/rocketmq-console-ng
+    ports:
+      - 8090:8080
+    environment: 
+      - JAVA_OPTS=-Drocketmq.namesrv.addr=namesrv:9876
+      - -Dcom.rocketmq.sendMessageWithVIPChannel=false
+    links: 
+      - broker
+    networks:
+      - env
 networks: 
   env:
