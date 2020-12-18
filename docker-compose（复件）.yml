@@ -1,7 +1,7 @@
 version: '3'
 services:
-  php5.4:
-    image: registry.cn-hangzhou.aliyuncs.com/chunmeng_jiang/php_env:fpm-5.4
+  php5.6:
+    image: registry.cn-hangzhou.aliyuncs.com/chunmeng_jiang/php_env:fpm-5.6
     #    build: ./env_builds/php5.6
     restart: always
     networks:
@@ -11,23 +11,11 @@ services:
       - redis
     volumes:
       - ./wwwroot:/wwwroot
-
-  php5.6:
-    image: registry.cn-hangzhou.aliyuncs.com/chunmeng_jiang/php_env:fpm-5.6
-#    build: ./env_builds/php5.6
-    restart: always
-    networks:
-      - env
-    depends_on:
-      - mysql
-      - redis
-    volumes:
-     - ./wwwroot:/wwwroot
-     - ./config/php5.6/www.conf:/usr/local/etc/php-fpm.d/www.conf
-     - ./config/php5.6/php.ini:/usr/local/etc/php/php.ini
+      - ./config/php5.6/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./config/php5.6/php.ini:/usr/local/etc/php/php.ini
   php7.0:
     image: registry.cn-hangzhou.aliyuncs.com/chunmeng_jiang/php_env:fpm-7.0
-#    build: ./env_builds/php7.0
+    #    build: ./env_builds/php7.0
     restart: always
     networks:
       - env
@@ -35,12 +23,12 @@ services:
       - mysql
       - redis
     volumes:
-     - ./wwwroot:/wwwroot
-     - ./config/php7.0/www.conf:/usr/local/etc/php-fpm.d/www.conf
-     - ./config/php7.0/php.ini:/usr/local/etc/php/php.ini
+      - ./wwwroot:/wwwroot
+      - ./config/php7.0/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./config/php7.0/php.ini:/usr/local/etc/php/php.ini
   php7.3:
     image: registry.cn-hangzhou.aliyuncs.com/chunmeng_jiang/php_env:fpm-7.3
-#    build: ./env_builds/php7.3
+    #    build: ./env_builds/php7.3
     restart: always
     networks:
       - env
@@ -48,36 +36,31 @@ services:
       - mysql
       - redis
     volumes:
-     - ./wwwroot:/wwwroot
-     - ./config/php7.3/www.conf:/usr/local/etc/php-fpm.d/www.conf
-     - ./config/php7.3/php.ini:/usr/local/etc/php/php.ini
-       #hyperf:
-       #build: ./env_builds/hyperf
-       #networks:
-       #- env
-       #depends_on:
-       #- mysql
-       #- redis
-       #- rabbitmq
-       #volumes:
-       #- ./wwwroot:/wwwroot
-       #ports:
-       #- "9501:9501"
-  nginx:
-    image: nginx:1.16-alpine
-    restart: always
+      - ./wwwroot:/wwwroot
+      - ./config/php7.3/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - ./config/php7.3/php.ini:/usr/local/etc/php/php.ini
+  hyperf:
+    build: ./env_builds/hyperf
     networks:
       - env
     depends_on:
-      - php5.4
+      - mysql
+      - redis
+      - rabbitmq
+    volumes:
+      - ./wwwroot:/wwwroot
+    ports:
+      - "9501:9501"
+  nginx:
+    image: nginx:1.16-alpine
+    networks:
+      - env
+    depends_on:
       - php5.6
       - php7.0
       - php7.3
     ports:
       - "80:80"
-      - "8080:8099"
-      - "8081:8098"
-      - "8082:8097"
     volumes:
       - ./config/nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./config/nginx/conf.d:/etc/nginx/conf.d
@@ -85,112 +68,64 @@ services:
   node:
     build: env_builds/node
     volumes:
-     - ./wwwroot:/wwwroot
+      - ./wwwroot:/wwwroot
     networks:
       - env
   mysql:
     image: mysql:5.7
     ports:
-     - "3306:3306"
+      - "3306:3306"
     volumes:
-     - ./data/Mysql5.7:/var/lib/mysql
-     - ./wwwroot:/wwwroot
-     - ./config/mysql/mysqld.conf:/etc/mysql/mysql.conf.d/mysqld.cnf
+      - ./data/Mysql5.7:/var/lib/mysql
+      - ./wwwroot:/wwwroot
     environment:
       - MYSQL_ROOT_PASSWORD=12306
     restart: always
     networks:
       - env
-  #rabbitmq:
-    #image: rabbitmq:3.7-management-alpine
-    #restart: always
-    #environment:
-      #- RABBITMQ_DEFAULT_USER=root
-      #- RABBITMQ_DEFAULT_PASS=12306
-    #ports:
-      #- "5672:5672"
-      #- "15672:15672"
-    #networks:
-      #- env
+  rabbitmq:
+    image: rabbitmq:3.7-management-alpine
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=root
+      - RABBITMQ_DEFAULT_PASS=12306
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - env
   redis:
     image: registry.cn-hangzhou.aliyuncs.com/chunmeng_jiang/php_env:redis
-#    build: ./env_builds/redis
+    #    build: ./env_builds/redis
     ports:
-     - "6379:6379"
+      - "6379:6379"
     volumes:
-     - ./data/redis5:/data
-     - ./config/redis/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./data/redis5:/data
+      - ./config/redis/redis.conf:/usr/local/etc/redis/redis.conf
     restart: always
     networks:
       - env
-        #elasticsearch:
-        #image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
-        #ports:
-        #- "9200:9200"
-        #environment:
-        #- discovery.type=single-node
-        #- node.name=es01
-        #volumes:
-        #- ./data/elasticsearch:/usr/share/elasticsearch/data
-        #- ./config/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-        #networks:
-        # - env
-        #kibana:
-        #image: docker.elastic.co/kibana/kibana:7.3.0
-        #depends_on:
-        #- elasticsearch
-        #ports:
-        #- "5601:5601"
-        #volumes:
-        #- ./config/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
-        #networks:
-        #- env
-  zookeeper:
-    image: zookeeper
-    restart: always
-    hostname: zoo1
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.3.0
     ports:
-      - 2181:2181
+      - "9200:9200"
     environment:
-      ZOO_MY_ID: 1
-      ZOO_SERVERS: server.1=0.0.0.0:2888:3888;2181
-    restart: always
-    networks: 
+      - discovery.type=single-node
+      - node.name=es01
+    volumes:
+      - ./data/elasticsearch:/usr/share/elasticsearch/data
+      - ./config/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    networks:
       - env
-  namesrv:
-    image: apacherocketmq/rocketmq:4.5.0
-    ports:
-      - 9876:9876
-    volumes:
-      - ./data/rocketmq/namesrv/logs:/home/rocketmq/logs
-    command: sh mqnamesrv
-    networks:
-      env:
-  broker:
-    image: apacherocketmq/rocketmq:4.5.0
-    ports:
-      - 10909:10909
-      - 10911:10911
-      - 10912:10912
-    volumes:
-      - ./data/rocketmq/broker/logs:/home/rocketmq/logs
-      - ./data/rocketmq/broker/store:/home/rocketmq/store
-      - ./config/rocketmq/broker/conf/broker.conf:/home/rocketmq/rocketmq-4.5.0/conf/broker.conf
-    command: sh mqbroker -n namesrv:9876 autoCreateTopicEnable=true -c ../conf/broker.conf 
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.3.0
     depends_on:
-      - namesrv
+      - elasticsearch
+    ports:
+      - "5601:5601"
+    volumes:
+      - ./config/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
     networks:
-      env:
-  #rocketmq_console:
-    #image: styletang/rocketmq-console-ng
-    #ports:
-     # - 8090:8080
-   # environment: 
-      #- JAVA_OPTS=-Drocketmq.namesrv.addr=namesrv:9876
-      #- -Dcom.rocketmq.sendMessageWithVIPChannel=false
-    #links: 
-      #- broker
-    #networks:
-      #- env
-networks: 
+      - env
+networks:
   env:
